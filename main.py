@@ -1,4 +1,4 @@
-import bruteforce
+import bruteforce_combinations
 import optimized
 from timeit import default_timer as timer
 import tracemalloc as memory
@@ -20,7 +20,7 @@ def time_optimized(data):
 def time_bruteforce(data):
     """Displays the time the bruteforce algorithm needed to execute"""
     start = timer()
-    bruteforce.create_top_profit_list(data)
+    bruteforce_combinations.create_top_profit_list(data)
     end = timer()
     print(f"Bruteforce needed {end - start} seconds.")
 
@@ -28,7 +28,7 @@ def time_bruteforce(data):
 def memory_bruteforce(data):
     """Displays the peak memory used by the bruteforce algorithm"""
     memory.start()
-    bruteforce.create_top_profit_list(data)
+    bruteforce_combinations.create_top_profit_list(data)
     used_memory = round(memory.get_traced_memory()[1] / 1000000, 2)
     print(f"Bruteforce used up to {used_memory} MB of memory.")
     memory.stop()
@@ -44,4 +44,4 @@ def memory_optimized(data):
 
 
 if __name__ == '__main__':
-    bruteforce.create_top_profit_list(DATASET_TEST)
+    bruteforce_combinations.create_top_profit_list(DATASET_TEST)

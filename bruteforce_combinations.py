@@ -55,10 +55,10 @@ def create_top_profit_list(csv_dataset):
     best_combination = best_result["combination"]
 
     # Create and save a new CSV-file from the most profit list
-    Path("Bruteforce CSV Files").mkdir(parents=True, exist_ok=True)
+    Path("Bruteforce Combinations CSV Files").mkdir(parents=True, exist_ok=True)
     file_name = "top shares of " + csv_dataset.split(".")[0]
     field_names = [key for key, value in best_combination[0].items()]
-    with open(f"Bruteforce CSV Files/{file_name}.csv", "w", newline="", encoding="utf-8") as file:
+    with open(f"Bruteforce Combinations CSV Files/{file_name}.csv", "w", newline="", encoding="utf-8") as file:
         writer = csv.DictWriter(file, fieldnames=field_names)
         writer.writeheader()
         writer.writerows(best_combination)

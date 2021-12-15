@@ -1,4 +1,5 @@
 import bruteforce_combinations
+import bruteforce_recursive
 import optimized
 from timeit import default_timer as timer
 import tracemalloc as memory
@@ -44,4 +45,5 @@ def memory_optimized(data):
 
 
 if __name__ == '__main__':
-    bruteforce_combinations.create_top_profit_list(DATASET_TEST)
+    # bruteforce_combinations.create_top_profit_list(DATASET_TEST)
+    bruteforce_recursive.create_top_profit_list(DATASET_TEST)

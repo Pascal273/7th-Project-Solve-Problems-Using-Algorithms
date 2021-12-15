@@ -1,5 +1,4 @@
 import csv
-from pprint import pprint
 from itertools import combinations
 from pathlib import Path
 
@@ -28,20 +27,26 @@ def create_top_profit_list(csv_dataset):
                 if price > 0 and profit_euro > 0:
                     share_list.append({"name": name, "price(€)": price, "profit(€)": profit_euro})
 
-        n = len(share_list)
-        combi = knapsack(share_list, BUDGET, n)
-        pprint(combi)
-        print("Price Total: ", round(sum(i["price(€)"] for i in combi), 2))
-        print("Profit Total: ", round(sum(i["profit(€)"] for i in combi), 2))
+    n = len(share_list)
+    best_combination = knapsack(share_list, BUDGET, n)
+
+    # append "footer" with total of cost and profit
+    total_cost = round(sum(i["price(€)"] for i in best_combination), 2)
+    total_profit = round(sum(i["profit(€)"] for i in best_combination), 2)
+    best_combination.append({
+        "name": "Total",
+        "price(€)": total_cost,
+        "profit(€)": total_profit
+    })
 
     # Create and save a new CSV-file from the most profit list
-    # Path("Bruteforce Recursive CSV Files").mkdir(parents=True, exist_ok=True)
-    # file_name = "top shares of " + csv_dataset.split(".")[0]
-    # field_names = [key for key, value in best_combination[0].items()]
-    # with open(f"Bruteforce Recursive CSV Files/{file_name}.csv", "w", newline="", encoding="utf-8") as file:
-    #     writer = csv.DictWriter(file, fieldnames=field_names)
-    #     writer.writeheader()
-    #     writer.writerows(best_combination)
+    Path("Bruteforce Recursive CSV Files").mkdir(parents=True, exist_ok=True)
+    file_name = "top shares of " + csv_dataset.split(".")[0]
+    field_names = [key for key, value in best_combination[0].items()]
+    with open(f"Bruteforce Recursive CSV Files/{file_name}.csv", "w", newline="", encoding="utf-8") as file:
+        writer = csv.DictWriter(file, fieldnames=field_names)
+        writer.writeheader()
+        writer.writerows(best_combination)
 
 
 def knapsack(share_list, budget, n, combination=None):

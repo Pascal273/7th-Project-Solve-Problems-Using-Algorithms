@@ -27,8 +27,8 @@ def create_top_profit_list(csv_dataset):
                 if price > 0 and profit_euro > 0:
                     share_list.append({"name": name, "price(€)": price, "profit(€)": profit_euro})
 
-    n = len(share_list)
-    best_combination = knapsack(share_list, BUDGET, n)
+    # n = len(share_list)
+    best_combination = get_best_combination(share_list, BUDGET)
 
     # append "footer" with total of cost and profit
     total_cost = round(sum(i["price(€)"] for i in best_combination), 2)
@@ -40,42 +40,56 @@ def create_top_profit_list(csv_dataset):
     })
 
     # Create and save a new CSV-file from the most profit list
-    Path("Bruteforce Recursive CSV Files").mkdir(parents=True, exist_ok=True)
+    Path("Bruteforce CSV Files").mkdir(parents=True, exist_ok=True)
     file_name = "top shares of " + csv_dataset.split(".")[0]
     field_names = [key for key, value in best_combination[0].items()]
-    with open(f"Bruteforce Recursive CSV Files/{file_name}.csv", "w", newline="", encoding="utf-8") as file:
+    with open(f"Bruteforce CSV Files/{file_name}.csv", "w", newline="", encoding="utf-8") as file:
         writer = csv.DictWriter(file, fieldnames=field_names)
         writer.writeheader()
         writer.writerows(best_combination)
 
 
-def knapsack(share_list, budget, n, combination=None):
+def get_best_combination(share_list, budget, n=None, combination=None):
+    """
+    Takes a list of share objects (dictionary format) and a max-budget and returns
+    the combination with the highest profit that doesn't exceed the budget.
+
+    Args:
+        share_list: list     - list of dictionaries in format of:
+                               {"name": x, "price(€)": x,xx, "profit(€)": x,xx}
+        budget: int or float - the max budget that isn't allowed to be exceeded.
+        n : int              - the number of items in share_list
+        combination: list    - list of possible combinations that will be created
+                               and compared and eliminated during the process
+    """
+    # at first call n = number of shares in list
+    if n is None:
+        n = len(share_list)
+
+    # at first call create empty list for combinations
     if combination is None:
         combination = []
     current_total = sum(i["price(€)"] for i in combination)
 
     share = share_list[n - 1]
-    price = share["price(€)"]
 
     # base Case
     if n == 0:
-        # print("end of list or too expensive!")
         return combination
 
-    if current_total + price > budget:
-        return knapsack(share_list, budget, n-1, combination)
+    # if current price exceeds the budget, the current share can't be included
+    if current_total + share["price(€)"] > budget:
+        return get_best_combination(share_list, budget, n - 1, combination)
 
     # case 1: share included in the optimal solution
     # case 2: not included
     else:
-        case_1 = knapsack(share_list, budget, n-1, combination + [share])
-        case_2 = knapsack(share_list, budget, n-1, combination)
+        case_1 = get_best_combination(share_list, budget, n - 1, combination + [share])
+        case_2 = get_best_combination(share_list, budget, n - 1, combination)
         value1 = sum(i["profit(€)"] for i in case_1)
         value2 = sum(i["profit(€)"] for i in case_2)
 
         if value1 > value2:
-            # print("case_1!")
             return case_1
         else:
-            # print("case_2!")
             return case_2

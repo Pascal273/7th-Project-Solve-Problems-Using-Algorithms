@@ -27,7 +27,7 @@ def create_top_profit_list(csv_dataset):
                 if price > 0 and profit_euro > 0:
                     share_list.append({"name": name, "price(€)": price, "profit(€)": profit_euro})
 
-    # n = len(share_list)
+    # get best result
     best_combination = get_best_combination(share_list, BUDGET)
 
     # append "footer" with total of cost and profit
@@ -62,6 +62,7 @@ def get_best_combination(share_list, budget, n=None, combination=None):
         combination: list    - list of possible combinations that will be created
                                and compared and eliminated during the process
     """
+
     # at first call n = number of shares in list
     if n is None:
         n = len(share_list)
@@ -71,13 +72,14 @@ def get_best_combination(share_list, budget, n=None, combination=None):
         combination = []
     current_total = sum(i["price(€)"] for i in combination)
 
+    # get current share
     share = share_list[n - 1]
 
     # base Case
     if n == 0:
         return combination
 
-    # if current price exceeds the budget, the current share can't be included
+    # if current total price exceeds the budget, the current share can't be included
     if current_total + share["price(€)"] > budget:
         return get_best_combination(share_list, budget, n - 1, combination)
 

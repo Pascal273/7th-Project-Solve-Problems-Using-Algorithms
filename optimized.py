@@ -1,4 +1,5 @@
 import csv
+from math import ceil
 from pathlib import Path
 from pprint import pprint
 
@@ -30,7 +31,7 @@ def create_top_profit_list(csv_dataset):
                     share_list.append({"name": name, "price(€)": price, "profit(€)": profit_euro})
 
     # sort list (lowest -> highest profit) to start with the top-profit shares
-    sorted_list = sorted(share_list, key=lambda x: x["profit(€)"])
+    sorted_list = sorted(share_list, key=lambda x: x["profit(€)"], reverse=True)
 
     # create a new list of only the top profit shares within the MAX_TO_SPEND limit
     best_combination = get_best_combination(sorted_list, BUDGET)
@@ -41,7 +42,6 @@ def create_top_profit_list(csv_dataset):
 
     print("total cost: ", total_cost)
     print("total profit", total_profit)
-    print("Recursion ran", count, " times")
 
     # Create and save a new CSV-file from the most profit list
     # Path("Optimized CSV Files").mkdir(parents=True, exist_ok=True)
@@ -53,64 +53,31 @@ def create_top_profit_list(csv_dataset):
     #     writer.writerows(best_combination)
 
 
-def get_best_combination(share_list, budget, n=None, combination=None, memo=None):
-    """
-    Takes a list of share objects (dictionary format) and a max-budget and returns
-    the combination with the highest profit that doesn't exceed the budget.
+def get_best_combination(share_list, budget, n=None):
 
-    Args:
-        share_list: list     - list of dictionaries in format of:
-                               {"name": x, "price(€)": x,xx, "profit(€)": x,xx}
-        budget: int or float - the max budget that isn't allowed to be exceeded.
-        n : int              - the number of items in share_list
-        combination: list    - list of possible combinations that will be created
-                               and compared and eliminated during the process
-    """
-
-    global count
-    count += 1
-
-    # at first call n = number of shares in list
     if n is None:
         n = len(share_list)
 
-    # at first call create empty list for combinations
-    if combination is None:
-        combination = []
-    current_total = sum(i["price(€)"] for i in combination)
+    # create empty table
+    table = [[[] for b in range(budget + 1)] for i in range(n + 1)]
 
-    if memo is None:
-        memo = {}
+    # populate table in bottom up manner
+    for i in range(n + 1):
+        for b in range(budget + 1):
+            if i == 0 or b == 0:
+                table[i][b] = []
+            elif ceil(share_list[i - 1]["price(€)"]) <= b:
+                case1 = table[i - 1][b - ceil(share_list[i - 1]["price(€)"])] + [share_list[i - 1]]
+                case2 = table[i - 1][b]
+                value1 = sum(i["profit(€)"] for i in case1)
+                value2 = sum(i["profit(€)"] for i in case2)
+                if value1 > value2:
+                    table[i][b] = case1
+                else:
+                    table[i][b] = case2
+            else:
+                table[i][b] = table[i - 1][b]
 
-    m = f"{n}, {int(current_total)}"
-
-    if m in memo:
-        return memo[m]
-
-    # get current share
-    share = share_list[n - 1]
-
-    # base Case
-    if n == 0:
-        return combination
-
-    # if current total price exceeds the budget, the current share can't be included
-    if current_total + share["price(€)"] > budget:
-        memo[m] = get_best_combination(share_list, budget, n - 1, combination, memo)
-        return memo[m]
-
-    # case 1: share included in the optimal solution
-    # case 2: not included
-    else:
-        case_1 = get_best_combination(share_list, budget, n - 1, combination + [share], memo)
-        case_2 = get_best_combination(share_list, budget, n - 1, combination, memo)
-        value1 = sum(i["profit(€)"] for i in case_1)
-        value2 = sum(i["profit(€)"] for i in case_2)
-
-        if value1 > value2:
-            memo[m] = case_1
-            return memo[m]
-        else:
-            memo[m] = case_2
-            return memo[m]
-
+    # get result
+    res = table[n][budget]
+    return res

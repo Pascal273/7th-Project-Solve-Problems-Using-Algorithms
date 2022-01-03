@@ -30,33 +30,41 @@ def create_top_profit_list(csv_dataset):
                 if profit_euro > 0:
                     share_list.append({"name": name, "price(€)": price, "profit(€)": profit_euro})
 
-    # sort list (lowest -> highest profit) to start with the top-profit shares
-    sorted_list = sorted(share_list, key=lambda x: x["profit(€)"], reverse=True)
-
     # create a new list of only the top profit shares within the MAX_TO_SPEND limit
-    best_combination = get_best_combination(sorted_list, BUDGET)
+    best_combination = get_best_combination(share_list, BUDGET)
 
-    pprint(best_combination)
     total_cost = round(sum(i["price(€)"] for i in best_combination), 2)
     total_profit = round(sum(i["profit(€)"] for i in best_combination), 2)
 
-    print("total cost: ", total_cost)
-    print("total profit", total_profit)
+    # append "footer" with total of cost and profit
+    best_combination.append({
+        "name": "Total",
+        "price(€)": total_cost,
+        "profit(€)": total_profit
+    })
 
     # Create and save a new CSV-file from the most profit list
-    # Path("Optimized CSV Files").mkdir(parents=True, exist_ok=True)
-    # file_name = "top shares of " + csv_dataset.split(".")[0]
-    # field_names = [key for key, value in best_combination[0].items()]
-    # with open(f"Optimized CSV Files/{file_name}.csv", "w", newline="", encoding="utf-8") as file:
-    #     writer = csv.DictWriter(file, fieldnames=field_names)
-    #     writer.writeheader()
-    #     writer.writerows(best_combination)
+    Path("Optimized CSV Files").mkdir(parents=True, exist_ok=True)
+    file_name = "top shares of " + csv_dataset.split(".")[0]
+    field_names = [key for key, value in best_combination[0].items()]
+    with open(f"Optimized CSV Files/{file_name}.csv", "w", newline="", encoding="utf-8") as file:
+        writer = csv.DictWriter(file, fieldnames=field_names)
+        writer.writeheader()
+        writer.writerows(best_combination)
 
 
-def get_best_combination(share_list, budget, n=None):
+def get_best_combination(share_list, budget):
+    """
+    Takes a list of share objects (dictionary format) and a max-budget and returns
+    the combination with the highest profit that doesn't exceed the budget.
 
-    if n is None:
-        n = len(share_list)
+    Args:
+        share_list: list     - list of dictionaries in format of:
+                               {"name": x, "price(€)": x,xx, "profit(€)": x,xx}
+        budget: int - the max budget that isn't allowed to be exceeded.
+    """
+    # n = number of shares
+    n = len(share_list)
 
     # create empty table
     table = [[[] for b in range(budget + 1)] for i in range(n + 1)]
@@ -78,6 +86,6 @@ def get_best_combination(share_list, budget, n=None):
             else:
                 table[i][b] = table[i - 1][b]
 
-    # get result
-    res = table[n][budget]
+    # get and return result
+    res = list(table[n][budget])
     return res

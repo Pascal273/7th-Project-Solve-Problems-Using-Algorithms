@@ -45,4 +45,5 @@ def memory_optimized(data):
 
 if __name__ == '__main__':
     # bruteforce.create_top_profit_list(DATASET_TEST)
+    optimized.create_top_profit_list(DATASET_1)
     optimized.create_top_profit_list(DATASET_2)

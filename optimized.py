@@ -1,13 +1,9 @@
 import csv
 from math import ceil
 from pathlib import Path
-from pprint import pprint
-
-BUDGET = 500
-count = 0
 
 
-def create_top_profit_list(csv_dataset):
+def create_top_profit_list(csv_dataset, budget):
     """
     Takes a CSV-dataset (share name, price, win in %) and creates a new CSV-file
     with the top profit shares only within a total price of >MAX_TO_SPEND< €.
@@ -31,7 +27,7 @@ def create_top_profit_list(csv_dataset):
                     share_list.append({"name": name, "price(€)": price, "profit(€)": profit_euro})
 
     # create a new list of only the top profit shares within the MAX_TO_SPEND limit
-    best_combination = get_best_combination(share_list, BUDGET)
+    best_combination = get_best_combination(share_list, budget)
 
     total_cost = round(sum(i["price(€)"] for i in best_combination), 2)
     total_profit = round(sum(i["profit(€)"] for i in best_combination), 2)
@@ -66,7 +62,7 @@ def get_best_combination(share_list, budget):
     # n = number of shares
     n = len(share_list)
 
-    # create empty table
+    # create table of empty result lists
     table = [[[] for b in range(budget + 1)] for i in range(n + 1)]
 
     # populate table in bottom up manner

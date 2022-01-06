@@ -3,6 +3,8 @@ import optimized
 from timeit import default_timer as timer
 import tracemalloc as memory
 
+BUDGET = 500
+
 DATASET_TEST = "dataset_test.csv"
 
 DATASET_1 = "dataset1_Python+P7.csv"
@@ -44,6 +46,6 @@ def memory_optimized(data):
 
 
 if __name__ == '__main__':
-    # bruteforce.create_top_profit_list(DATASET_TEST)
-    optimized.create_top_profit_list(DATASET_1)
-    optimized.create_top_profit_list(DATASET_2)
+    # bruteforce.create_top_profit_list(DATASET_TEST, BUDGET)
+    optimized.create_top_profit_list(DATASET_1, BUDGET)
+    optimized.create_top_profit_list(DATASET_2, BUDGET)

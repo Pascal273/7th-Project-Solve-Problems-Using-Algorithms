@@ -2,10 +2,8 @@ import csv
 from itertools import combinations
 from pathlib import Path
 
-BUDGET = 500
 
-
-def create_top_profit_list(csv_dataset):
+def create_top_profit_list(csv_dataset, budget):
     """
     Takes a CSV-dataset (share name, price, profit in %) and creates a new CSV-file
     with the top profit shares only within a total price of >MAX_TO_SPEND< €.
@@ -28,7 +26,7 @@ def create_top_profit_list(csv_dataset):
                     share_list.append({"name": name, "price(€)": price, "profit(€)": profit_euro})
 
     # get best result
-    best_combination = get_best_combination(share_list, BUDGET)
+    best_combination = get_best_combination(share_list, budget)
 
     # append "footer" with total of cost and profit
     total_cost = round(sum(i["price(€)"] for i in best_combination), 2)

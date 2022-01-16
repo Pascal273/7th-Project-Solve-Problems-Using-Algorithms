@@ -72,8 +72,12 @@ def get_best_combination(share_list, budget):
     # populate table in bottom up manner
     for i in range(n + 1):
         for b in range(budget + 1):
+            # if i or b equals 0 no share included (empty list)
             if i == 0 or b == 0:
                 table[i][b] = []
+            # if share-price smaller or equal to budget
+            # check profit of two cases (share included / not included in combination)
+            # current save the case with the greater profit at current table position
             elif ceil(share_list[i - 1]["price(€)"]) <= b:
                 case1 = table[i - 1][b - ceil(share_list[i - 1]["price(€)"])] + [share_list[i - 1]]
                 case2 = table[i - 1][b]
@@ -83,6 +87,7 @@ def get_best_combination(share_list, budget):
                     table[i][b] = case1
                 else:
                     table[i][b] = case2
+            # else save the combination on the position of the last share at the same budget
             else:
                 table[i][b] = table[i - 1][b]
 

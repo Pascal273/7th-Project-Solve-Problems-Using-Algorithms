@@ -7,6 +7,10 @@ def create_top_profit_list(csv_dataset, budget):
     """
     Takes a CSV-dataset (share name, price, win in %) and creates a new CSV-file
     with the top profit shares only within a total price of >MAX_TO_SPEND< €.
+
+    Args:
+        csv_dataset: str - path to csv-file
+        budget: int - budget (maximum total costs)
     """
 
     # read the dataset-file and get the required values

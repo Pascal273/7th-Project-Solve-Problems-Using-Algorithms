@@ -13,3 +13,4 @@ if __name__ == '__main__':
     optimized.create_top_profit_list(DATASET_TEST, BUDGET)
     optimized.create_top_profit_list(DATASET_1, BUDGET)
     optimized.create_top_profit_list(DATASET_2, BUDGET)
+    print("Optimal result files successfully created!")

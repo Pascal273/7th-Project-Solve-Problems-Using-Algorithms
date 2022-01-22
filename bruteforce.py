@@ -28,6 +28,9 @@ def create_top_profit_list(csv_dataset, budget):
                 if price > 0 and profit_euro > 0:
                     share_list.append({"name": name, "price(€)": price, "profit(€)": profit_euro})
 
+    if len(share_list) > 20:
+        raise OverflowError("The share list has to many positions (max. 20 allowed!)")
+
     # get best result
     best_combination = get_best_combination(share_list, budget)
 
@@ -42,7 +45,7 @@ def create_top_profit_list(csv_dataset, budget):
 
     # Create and save a new CSV-file from the most profit list
     Path("Bruteforce CSV Files").mkdir(parents=True, exist_ok=True)
-    file_name = "top shares of " + csv_dataset.split(".")[0]
+    file_name = "top shares of " + csv_dataset.split("\\")[-1].split(".")[0]
     field_names = [key for key, value in best_combination[0].items()]
     with open(f"Bruteforce CSV Files/{file_name}.csv", "w", newline="", encoding="utf-8") as file:
         writer = csv.DictWriter(file, fieldnames=field_names)

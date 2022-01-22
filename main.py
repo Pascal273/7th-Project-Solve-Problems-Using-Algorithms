@@ -1,16 +1,25 @@
 import bruteforce
 import optimized
 
-BUDGET = 500
-
-DATASET_TEST = "dataset_test.csv"
-
-DATASET_1 = "dataset1_Python+P7.csv"
-DATASET_2 = "dataset2_Python+P7.csv"
+BUDGET = "500"
 
 if __name__ == '__main__':
-    bruteforce.create_top_profit_list(DATASET_TEST, BUDGET)
-    optimized.create_top_profit_list(DATASET_TEST, BUDGET)
-    optimized.create_top_profit_list(DATASET_1, BUDGET)
-    optimized.create_top_profit_list(DATASET_2, BUDGET)
+    dataset = input("Please enter (or copy and paste) the path of the csv-dataset:\n")
+    budget = ""
+    while not budget.isdigit():
+        budget = input("What's the budget/max cost? (Press enter for default 500)") or BUDGET
+    budget = int(budget)
+
+    algorithm = input("Please enter:\n"
+                      "[O] to use the optimized algorithm\n"
+                      "[B] to use the bruteforce method\n"
+                      "WARNING! Bruteforce can't be used on files with much more than 20 shares\n"
+                      ).lower()
+
+    if algorithm == "b":
+        bruteforce.create_top_profit_list(dataset, budget)
+
+    else:
+        optimized.create_top_profit_list(dataset, budget)
+
     print("Optimal result files successfully created!")

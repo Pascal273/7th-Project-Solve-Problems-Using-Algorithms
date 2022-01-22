@@ -22,6 +22,7 @@ while it complies with the following limitations:
 1. Open your terminal
 2. Navigate to the directory that contains the main.py
 3. Run the command: `python main.py`
+4. Follow the instructions
 
    
 ## Notes

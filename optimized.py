@@ -45,7 +45,7 @@ def create_top_profit_list(csv_dataset, budget):
 
     # Create and save a new CSV-file from the most profit list
     Path("Optimized CSV Files").mkdir(parents=True, exist_ok=True)
-    file_name = "top shares of " + csv_dataset.split(".")[0]
+    file_name = "top shares of " + csv_dataset.split("\\")[-1].split(".")[0]
     field_names = [key for key, value in best_combination[0].items()]
     with open(f"Optimized CSV Files/{file_name}.csv", "w", newline="", encoding="utf-8") as file:
         writer = csv.DictWriter(file, fieldnames=field_names)

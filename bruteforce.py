@@ -4,8 +4,9 @@ from pathlib import Path
 
 def create_top_profit_list(csv_dataset, budget):
     """
-    Takes a CSV-dataset (share name, price, profit in %) and creates a new CSV-file
-    with the top profit shares only within a total price of >MAX_TO_SPEND< €.
+    Takes a CSV-dataset (share name, price, profit in %) and creates a new
+    CSV-file with the top profit shares only within
+    a total price of >MAX_TO_SPEND< €.
 
     Args:
         csv_dataset: str - path to csv-file
@@ -26,10 +27,15 @@ def create_top_profit_list(csv_dataset, budget):
 
                 profit_euro = round((price / 100 * profit_percent), 2)
                 if price > 0 and profit_euro > 0:
-                    share_list.append({"name": name, "price(€)": price, "profit(€)": profit_euro})
+                    share_list.append({
+                        "name": name,
+                        "price(€)": price,
+                        "profit(€)": profit_euro
+                    })
 
     if len(share_list) > 20:
-        raise OverflowError("The share list has to many positions (max. 20 allowed!)")
+        raise OverflowError(
+            "The share list has to many positions (max. 20 allowed!)")
 
     # get best result
     best_combination = get_best_combination(share_list, budget)
@@ -47,7 +53,8 @@ def create_top_profit_list(csv_dataset, budget):
     Path("Bruteforce CSV Files").mkdir(parents=True, exist_ok=True)
     file_name = "top shares of " + csv_dataset.split("\\")[-1].split(".")[0]
     field_names = [key for key, value in best_combination[0].items()]
-    with open(f"Bruteforce CSV Files/{file_name}.csv", "w", newline="", encoding="utf-8") as file:
+    with open(f"Bruteforce CSV Files/{file_name}.csv",
+              "w", newline="", encoding="utf-8") as file:
         writer = csv.DictWriter(file, fieldnames=field_names)
         writer.writeheader()
         writer.writerows(best_combination)
@@ -55,15 +62,17 @@ def create_top_profit_list(csv_dataset, budget):
 
 def get_best_combination(share_list, budget, n=None, combination=None):
     """
-   Takes a list of share objects (dictionary format) and a max-budget and returns
-     the combination with the highest profit that doesn't exceed the budget.
+   Takes a list of share objects (dictionary format) and a max-budget and
+   returns the combination with the highest profit that doesn't exceed the
+   budget.
 
     Args:
         share_list: list     - list of dictionaries in format of:
                                {"name": x, "price(€)": x,xx, "profit(€)": x,xx}
-        budget: int or float - the max budget that isn't allowed to be exceeded.
+        budget: int or float - the max budget that isn't allowed to be exceeded
         n : int              - the number of items in share_list
-        combination: list    - list of possible combinations that will be created
+        combination: list    - list of possible combinations that
+                               will be created
                                and compared and eliminated during the process
     """
 
@@ -91,7 +100,9 @@ def get_best_combination(share_list, budget, n=None, combination=None):
     # case 1: share included in the optimal solution
     # case 2: not included
     else:
-        case_1 = get_best_combination(share_list, budget, n - 1, combination + [share])
+        case_1 = get_best_combination(
+            share_list, budget, n - 1, combination + [share]
+        )
         case_2 = get_best_combination(share_list, budget, n - 1, combination)
         value1 = sum(i["profit(€)"] for i in case_1)
         value2 = sum(i["profit(€)"] for i in case_2)

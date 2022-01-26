@@ -44,10 +44,10 @@ def create_top_profit_list(csv_dataset, budget):
     })
 
     # Create and save a new CSV-file from the most profit list
-    Path("Optimized CSV Files").mkdir(parents=True, exist_ok=True)
+    Path("Space optimized CSV Files").mkdir(parents=True, exist_ok=True)
     file_name = "top shares of " + csv_dataset.split("\\")[-1].split(".")[0]
     field_names = [key for key, value in best_combination[0].items()]
-    with open(f"Optimized CSV Files/{file_name}.csv", "w", newline="", encoding="utf-8") as file:
+    with open(f"Space optimized CSV Files/{file_name}.csv", "w", newline="", encoding="utf-8") as file:
         writer = csv.DictWriter(file, fieldnames=field_names)
         writer.writeheader()
         writer.writerows(best_combination)
@@ -66,31 +66,25 @@ def get_best_combination(share_list, budget):
     # n = number of shares
     n = len(share_list)
 
-    # create table of empty result lists (2 dimensional array! Memory use = N*Budget]
-    table = [[[] for b in range(budget + 1)] for i in range(n + 1)]
+    # create table of empty result lists (1 dimensional array! Memory Use = Budget)
+    table = [[] for b in range(budget + 1)]
 
-    # populate table in bottom up manner
-    for i in range(n + 1):
-        for b in range(budget + 1):
-            # if i or b equals 0 no share included (empty list)
-            if i == 0 or b == 0:
-                table[i][b] = []
+    # populate array in a bottom up manner
+    for i in range(1, n + 1):
+        for b in range(budget, 0, -1):
             # if share-price smaller or equal to budget
             # check profit of two cases (share included / not included in combination)
-            # save the case with the greater profit at current table position
-            elif ceil(share_list[i - 1]["price(€)"]) <= b:
-                case1 = table[i - 1][b - ceil(share_list[i - 1]["price(€)"])] + [share_list[i - 1]]
-                case2 = table[i - 1][b]
+            # save the case with the greater profit at the current position of the array
+            if share_list[i - 1]["price(€)"] <= b:
+                case1 = table[b - ceil(share_list[i - 1]["price(€)"])] + [share_list[i - 1]]
+                case2 = table[b]
                 value1 = sum(i["profit(€)"] for i in case1)
                 value2 = sum(i["profit(€)"] for i in case2)
                 if value1 > value2:
-                    table[i][b] = case1
+                    table[b] = case1
                 else:
-                    table[i][b] = case2
-            # else save the combination on the position of the last share at the same budget
-            else:
-                table[i][b] = table[i - 1][b]
+                    table[b] = case2
 
     # get and return result
-    res = list(table[n][budget])
+    res = list(table[budget])
     return res
